@@ -1,0 +1,61 @@
+project:
+  random_seed: 42
+  sampling_rate_hz: 125
+  n_jobs: -1
+  verbose: 1
+
+paths:
+  raw_data_dir: data/raw
+  processed_dir: data/processed
+  split_dir: data/splits
+  model_dir: results/models
+  plot_dir: results/plots
+
+data_loader:
+  mat_glob: part_*.mat
+  mat_variable_name: null
+  group_block_size: 10
+
+preprocessing:
+  ppg_bandpass_low_hz: 0.5
+  ppg_bandpass_high_hz: 8.0
+  filter_order: 4
+  max_nan_ratio: 0.05
+  max_nan_gap_seconds: 0.2
+  min_signal_std: 1.0e-6
+  segment_normalization: zscore
+
+segmentation:
+  window_seconds: 5
+  overlap_ratio: 0.5
+  min_segment_std: 1.0e-6
+
+labeling:
+  sbp_min: 70
+  sbp_max: 220
+  dbp_min: 30
+  dbp_max: 140
+  min_pulse_pressure: 10
+
+split:
+  test_size: 0.2
+  use_group_split: true
+
+model:
+  cv_folds: 5
+  scoring: neg_mean_absolute_error
+  param_grid:
+    n_estimators: [200, 300]
+    max_depth: [4, 6]
+    learning_rate: [0.05, 0.1]
+  fixed_params:
+    objective: reg:squarederror
+    subsample: 0.8
+    colsample_bytree: 0.8
+    min_child_weight: 1
+    reg_alpha: 0.0
+    reg_lambda: 1.0
+
+outputs:
+  save_processed_arrays: true
+  sample_prediction_rows: 20
